@@ -1,19 +1,20 @@
 const express = require("express")
+const { useAuth } = require("./useAuth")
 const app = express()
 
+app.use("/admin",useAuth)
 
-app.get("/",(req,res)=>{
-    res.send("hello from homepage")
+app.get("/admin/user",(req,res,next)=>{
+    res.send("welcome to admin dashboard ")
 })
 
-app.get("/vimal",(req,res)=>{
-    res.send("hello vimal")
+app.get("/admin/getalldata",(req,res,next)=>{
+    res.send("all data sent ")
 })
 
-app.get("/test",(req,res)=>{
-    res.send("hello test")
+app.get("/admin/deletedata",(req,res,next)=>{
+    res.send("data deleted")
 })
-
 
 
 app.listen(3000,()=>{
