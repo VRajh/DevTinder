@@ -2,19 +2,28 @@ const express = require("express")
 const { useAuth } = require("./useAuth")
 const app = express()
 
-app.use("/admin",useAuth)
+//app.use("/admin",useAuth)
+app.use("/",(err,req,res,next)=>{
+    console.log("came inside middleware")
+    if(err){
+        res.send("err from middleware")   
+    }
+    
+})
 
 app.get("/admin/user",(req,res,next)=>{
-    res.send("welcome to admin dashboard ")
+    try
+    {
+        throw new Error("testing error")
+        res.send("welcome to admin dashboard ")
+    }
+   catch(err)
+   {
+       res.send("err from try catch")
+   }
+   
 })
 
-app.get("/admin/getalldata",(req,res,next)=>{
-    res.send("all data sent ")
-})
-
-app.get("/admin/deletedata",(req,res,next)=>{
-    res.send("data deleted")
-})
 
 
 app.listen(3000,()=>{
