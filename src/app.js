@@ -1,31 +1,32 @@
 const express = require("express")
-const { useAuth } = require("./useAuth")
+const {connectDB} = require("./config/database")
 const app = express()
+const User = require("./models/user")
 
-//app.use("/admin",useAuth)
-app.use("/",(err,req,res,next)=>{
-    console.log("came inside middleware")
-    if(err){
-        res.send("err from middleware")   
-    }
-    
+app.post("/signup",async (req,res,next)=>{
+  
+    //inserting data into DB
+    const userObj = {
+        firstName: "Vimal",
+        lastName: "Rajh",
+        age: 28,
+        email: "vimal@gmail.com",
+        password : "password"
+    }  
+
+    const user = new User(userObj)
+    await user.save()
+    res.send("Data added successfully")
+
 })
 
-app.get("/admin/user",(req,res,next)=>{
-    try
-    {
-        throw new Error("testing error")
-        res.send("welcome to admin dashboard ")
-    }
-   catch(err)
-   {
-       res.send("err from try catch")
-   }
-   
+connectDB().then(()=>{
+    console.log("DB connection established successfully")
+    app.listen(3000,()=>{
+        console.log("app started listening at port 3000")
+    })
+})
+.catch(err=>{
+     console.log("some error occured : ",err.message)
 })
 
-
-
-app.listen(3000,()=>{
-    console.log("app started listening at port 3000")
-})
