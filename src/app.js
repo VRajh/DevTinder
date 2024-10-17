@@ -2,9 +2,12 @@ const express = require("express")
 const {connectDB} = require("./config/database")
 const app = express()
 const User = require("./models/user")
+const currentTime = require("./config/date")
 
-app.post("/signup",async (req,res,next)=>{
-  
+app.use(express.json())
+
+/* app.post("/signup",async (req,res,next)=>{
+
     //inserting data into DB
     const userObj = {
         firstName: "Vimal",
@@ -18,6 +21,40 @@ app.post("/signup",async (req,res,next)=>{
     await user.save()
     res.send("Data added successfully")
 
+}) */
+
+app.post("/signup",async (req,res,next)=>{
+
+    //getting data from parameter
+    console.log(req.body)
+    const userObj = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        age: req.body.age,
+        email: req.body.email,
+        password : req.body.password,
+        timeStamp : currentTime
+    }
+
+    //inserting data into DB
+    const user = new User(userObj)
+    await user.save()
+    res.send("Data added successfully")
+
+})
+
+app.get("/user",async (req,res,next)=>{
+    try{
+    const data = await User.findOne({firstName})
+    if(!data)
+    {
+        res.send("data not found")
+    }
+    res.send(data)
+}
+catch(err){
+   res.status(400).send("some error occured : "+err.message)
+}
 })
 
 connectDB().then(()=>{
