@@ -33,24 +33,36 @@ app.post("/signup",async (req,res,next)=>{
         age: req.body.age,
         email: req.body.email,
         password : req.body.password,
-        timeStamp : currentTime
+        timeStamp : currentTime,
+        gender: req.body.gender,
+        skills: req.body.skills
     }
 
+    try
+    {
     //inserting data into DB
     const user = new User(userObj)
     await user.save()
     res.send("Data added successfully")
+    }
+    catch(err)
+    {
+        res.send(("some error occured : "+err.message))
+    }
+
 
 })
 
-app.get("/user",async (req,res,next)=>{
+app.get("/user/",async (req,res,next)=>{
     try{
-    const data = await User.findOne({firstName})
+    const data = await User.findOne({firstName:req.query.firstName})
     if(!data)
     {
         res.send("data not found")
     }
+    else{
     res.send(data)
+    }
 }
 catch(err){
    res.status(400).send("some error occured : "+err.message)
