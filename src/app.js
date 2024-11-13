@@ -4,8 +4,13 @@ const app = express()
 const User = require("./models/user")
 const currentTime = require("./config/date")
 const {validateSignUpData} = require("./utils/validation")
+const cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken');
+const {jwt_private_key} = require("./utils/constants")
+const userAuth = require("./utils/userAuth")
 
 app.use(express.json())
+app.use(cookieParser())
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -89,6 +94,11 @@ app.post("/login",async(req,res)=>{
         //validate res,body
         if(user && await bcrypt.compare(password, user.password))
         {
+            //generate jwt token and send it in cookie
+            const token = await jwt.sign({ _id:user._id }, jwt_private_key, { algorithm: 'HS256' })
+             
+            //sending jwt in cookie
+            res.cookie("jwt_token",token)
             res.status(200).send("login successful")
         }
         else{
@@ -101,6 +111,20 @@ app.post("/login",async(req,res)=>{
         res.status(400).send("some error occured : "+err.message)
     }
 
+})
+
+app.get("/profile",userAuth,async(req,res)=>{  
+    try
+    {
+       const {user} = req
+       //res.status(200).send("cookies received "+JSON.stringify(req.cookies))
+       res.status(200).send("welcome "+user.firstName+" "+user.lastName)
+
+    }
+    catch(err)
+    {
+        res.status(400).send("some error occured : "+err.message)
+    }
 })
 
 connectDB().then(()=>{
