@@ -92,13 +92,14 @@ app.post("/login",async(req,res)=>{
         const user = await User.findOne({email:email})
         console.log(user)
         //validate res,body
-        if(user && await bcrypt.compare(password, user.password))
+        if(user && user.validatePassword(password))
         {
             //generate jwt token and send it in cookie
-            const token = await jwt.sign({ _id:user._id }, jwt_private_key, { algorithm: 'HS256' })
-             
+            // const token = await jwt.sign({ _id:user._id }, jwt_private_key, { algorithm: 'HS256', expiresIn: '7d'})
+            const token = await user.getJWT()
+
             //sending jwt in cookie
-            res.cookie("jwt_token",token)
+            res.cookie("jwt_token",token,{expires:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) })
             res.status(200).send("login successful")
         }
         else{
