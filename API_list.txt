@@ -1,0 +1,23 @@
+
+authRouter
+- POST /signup
+- POST /login
+- POST /logout
+
+profileRouter
+- GET /profile/view
+- PATCH /profile/edit
+- PATCH /profile/password
+
+connectionRouter
+- POST /request/send/interested/:userld
+- POST /request/send/ignored/: userId
+- POST /request/review/accepted/:requestld
+- POST /request/review/rejected/:requestld
+
+userRouter
+- GET user/connections
+- GET user/requests
+- GET /feed - Gets you the profiles of other users on platform
+
+Status: ignore, interested, accepeted, rejected
